@@ -1,0 +1,113 @@
+//
+// Spatial: Low Precision Multiply-Accumulate
+//
+// Hardik Sharma
+// (hsharma@gatech.edu)
+
+module spatial_mult #(
+  parameter integer PRECISION         = 2,
+  parameter integer H_PRECISION       = PRECISION / 2,
+  parameter integer OUT_WIDTH         = PRECISION * 2,
+  parameter integer MODE_WIDTH        = 2
+) (
+  input                                       clk,
+  input                                       reset,
+  input  wire        [ MODE_WIDTH    -1:0]    mode,
+  input  wire        [ H_PRECISION   -1:0]    a_0,
+  input  wire        [ H_PRECISION   -1:0]    a_1,
+  input  wire        [ H_PRECISION   -1:0]    a_2,
+  input  wire        [ H_PRECISION   -1:0]    a_3,
+  input  wire        [ H_PRECISION   -1:0]    b_0,
+  input  wire        [ H_PRECISION   -1:0]    b_1,
+  input  wire        [ H_PRECISION   -1:0]    b_2,
+  input  wire        [ H_PRECISION   -1:0]    b_3,
+  output wire        [ OUT_WIDTH     -1:0]    out
+);
+
+//=========================================
+// Half Precision Multipliers
+//=========================================
+  wire [PRECISION-1:0] m_0;
+  wire [PRECISION-1:0] m_1;
+  wire [PRECISION-1:0] m_2;
+  wire [PRECISION-1:0] m_3;
+
+  // TODO: Replace with recursive instance
+  assign m_0 = a_0 * b_0;
+  assign m_1 = a_1 * b_1;
+  assign m_2 = a_2 * b_2;
+  assign m_3 = a_3 * b_3;
+//=========================================
+
+//=========================================
+// Step 1: Shift
+// Mode:
+//  0: 2Kx2K
+//  1: 2KxK
+//  2: Kx2K
+//  3: KxK
+//=========================================
+  wire [OUT_WIDTH-1:0] s_0;
+  wire [OUT_WIDTH-1:0] s_1;
+  wire [OUT_WIDTH-1:0] s_2;
+  wire [OUT_WIDTH-1:0] s_3;
+
+  reg [1:0] w_0;
+  reg [1:0] w_1;
+  reg [1:0] w_2;
+  reg [1:0] w_3;
+
+  always @(*) begin
+    case (mode)
+      0: begin
+        w_0 = 2'd0;
+        w_1 = 2'd1;
+        w_2 = 2'd1;
+        w_3 = 2'd2;
+      end
+      1: begin
+        w_0 = 2'd0;
+        w_1 = 2'd1;
+        w_2 = 2'd0;
+        w_3 = 2'd1;
+      end
+      2: begin
+        w_0 = 2'd0;
+        w_1 = 2'd0;
+        w_2 = 2'd1;
+        w_3 = 2'd1;
+      end
+      3: begin
+        w_0 = 2'd0;
+        w_1 = 2'd0;
+        w_2 = 2'd0;
+        w_3 = 2'd0;
+      end
+    endcase
+  end
+
+  assign s_0 = m_0 << (w_0 * H_PRECISION);
+  assign s_1 = m_1 << (w_1 * H_PRECISION);
+  assign s_2 = m_2 << (w_2 * H_PRECISION);
+  assign s_3 = m_3 << (w_3 * H_PRECISION);
+//=========================================
+
+//=========================================
+// Step 2: ADD
+// out = s_0 + s_1 + s_2 + s_3
+//=========================================
+  assign out = s_0 + s_1 + s_2 + s_3;
+//=========================================
+
+
+//=========================================
+// Debugging: COCOTB VCD
+//=========================================
+`ifdef COCOTB_TOPLEVEL_spatial_mult
+initial begin
+  $dumpfile("spatial_mult.vcd");
+  $dumpvars(0, spatial_mult);
+end
+`endif
+
+endmodule

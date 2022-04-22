@@ -1,0 +1,2 @@
+Signed Systolic Array
+name,Array_N,Array_M,Signed/Unsigned,Max Precision (bits),Min Precision (bits),Clock delay (ps),slack (ps),Cell usage,Area (um^2),Leakage Power (nW),Dynamic Power (nW),Total Power (nW)

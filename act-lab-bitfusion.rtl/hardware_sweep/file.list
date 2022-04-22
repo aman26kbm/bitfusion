@@ -1,0 +1,16 @@
+signed_temporal_mult.v
+spatial_mult.v
+signed_spatial_mult.v
+full_adder.v
+half_adder.v
+accumulator.v
+signed_mult.v
+shifter.v
+systolic_array.v
+register_sync.v
+register_async.v
+signed_adder.v
+mux_n_1.v
+mux_2_1.v
+comparator.v
+register_file_sp.v

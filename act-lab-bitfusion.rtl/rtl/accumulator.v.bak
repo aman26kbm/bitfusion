@@ -1,0 +1,43 @@
+//
+// Accumulator
+// Implements: out = out + in (sel == 1)
+//             out = in (sel == 0)
+//
+// Hardik Sharma
+// (hsharma@gatech.edu)
+
+module accumulator #(
+  parameter integer IN_WIDTH              = 8,
+  parameter integer OUT_WIDTH             = 8
+) (
+  input  wire                             clk,
+  input  wire                             reset,
+  input  wire                             sel,
+  input  wire signed [ IN_WIDTH  -1 : 0 ] in,
+  output wire signed [ OUT_WIDTH -1 : 0 ] out
+);
+
+wire signed [ OUT_WIDTH -1 : 0 ] next_out;
+
+// Adder:
+signed_adder #(
+  .IN1_WIDTH              ( IN_WIDTH      ),
+  .IN2_WIDTH              ( OUT_WIDTH     ),
+  .OUT_WIDTH              ( OUT_WIDTH     )
+) adder_inst (
+  .a                      ( in            ),
+  .b                      ( out           ),
+  .out                    ( next_out      )
+);
+
+register_sync #(
+  .WIDTH                  ( OUT_WIDTH     )
+) acc_reg_inst (
+  .clk                    ( clk           ),
+  .reset                  ( reset         ),
+  .enable                 ( sel           ),
+  .in                     ( next_out      ),
+  .out                    ( out           )
+);
+
+endmodule
