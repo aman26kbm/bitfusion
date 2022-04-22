@@ -85,6 +85,8 @@ class Simulator(object):
 
         self.accelerator = Accelerator(N, M, pmax, pmin, sram, mem_if_width, frequency)
 
+        self.suffix = "." + str(N) + "_" + str(M) + "_" + str(pmax) + "_" + str(pmin)
+
         ##################################################
         # Get stats for SRAM
         frequency = self.accelerator.frequency
@@ -94,7 +96,7 @@ class Simulator(object):
         dir_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../sram')
         self.sram_obj = CactiSweep(
                 bin_file=os.path.join(dir_path, 'cacti/cacti'),
-                csv_file=os.path.join(dir_path, 'cacti_sweep.csv'),
+                csv_file=os.path.join(dir_path, 'cacti_sweep'+self.suffix+'.csv'),
                 default_json=os.path.join(dir_path, 'default.json'),
                 default_dict=sram_opt_dict)
 
@@ -127,7 +129,8 @@ class Simulator(object):
 
 
         ##################################################
-        cfg_dict = {'size (bytes)': wbuf_bank_size /8., 'block size (bytes)': wbuf_bits/8., 'read-write port': 0}
+        cfg_dict = {'size (bytes)': wbuf_bank_size /8., 'block size (bytes)': max(wbuf_bits/8,1), 'read-write port': 0}
+        print("cfg_dict for wbuf = {}".format(cfg_dict))
         wbuf_data = self.sram_obj.get_data_clean(cfg_dict)
         wbuf_read_energy = float(wbuf_data['read_energy_nJ']) / wbuf_bits
         wbuf_write_energy = float(wbuf_data['write_energy_nJ']) / wbuf_bits
@@ -144,7 +147,8 @@ class Simulator(object):
         self.logger.debug('\tRead Energy                 : {0:>8.4f} pJ/bit'.format(wbuf_read_energy * 1.e3))
         self.logger.debug('\tWrite Energy                : {0:>8.4f} pJ/bit'.format(wbuf_write_energy * 1.e3))
         ##################################################
-        cfg_dict = {'size (bytes)': ibuf_bank_size /8., 'block size (bytes)': ibuf_bits/8., 'read-write port': 0}
+        cfg_dict = {'size (bytes)': ibuf_bank_size /8., 'block size (bytes)': max(ibuf_bits/8,1), 'read-write port': 0}
+        print("cfg_dict for ibuf = {}".format(cfg_dict))
         ibuf_data = self.sram_obj.get_data_clean(cfg_dict)
         ibuf_read_energy = float(ibuf_data['read_energy_nJ']) / ibuf_bits
         ibuf_write_energy = float(ibuf_data['write_energy_nJ']) / ibuf_bits
@@ -161,7 +165,8 @@ class Simulator(object):
         self.logger.debug('\tRead Energy                 : {0:>8.4f} pJ/bit'.format(ibuf_read_energy * 1.e3))
         self.logger.debug('\tWrite Energy                : {0:>8.4f} pJ/bit'.format(ibuf_write_energy * 1.e3))
         ##################################################
-        cfg_dict = {'size (bytes)': obuf_bank_size /8., 'block size (bytes)': obuf_bits/8., 'read-write port': 1}
+        cfg_dict = {'size (bytes)': obuf_bank_size /8., 'block size (bytes)': max(obuf_bits/8,1), 'read-write port': 1}
+        print("cfg_dict for obuf = {}".format(cfg_dict))
         obuf_data = self.sram_obj.get_data_clean(cfg_dict)
         obuf_read_energy = float(obuf_data['read_energy_nJ']) / obuf_bits
         obuf_write_energy = float(obuf_data['write_energy_nJ']) / obuf_bits
@@ -248,7 +253,7 @@ class Simulator(object):
 
 
         ##################################################
-        cfg_dict = {'size (bytes)': wbuf_bank_size /8., 'block size (bytes)': wbuf_bits/8., 'read-write port': 0}
+        cfg_dict = {'size (bytes)': wbuf_bank_size /8., 'block size (bytes)': max(wbuf_bits/8,1), 'read-write port': 0}
         wbuf_data = self.sram_obj.get_data_clean(cfg_dict)
         wbuf_read_energy = float(wbuf_data['read_energy_nJ']) / wbuf_bits
         wbuf_write_energy = float(wbuf_data['write_energy_nJ']) / wbuf_bits
@@ -265,7 +270,7 @@ class Simulator(object):
         self.logger.debug('\tRead Energy                 : {0:>8.4f} pJ/bit'.format(wbuf_read_energy * 1.e3))
         self.logger.debug('\tWrite Energy                : {0:>8.4f} pJ/bit'.format(wbuf_write_energy * 1.e3))
         ##################################################
-        cfg_dict = {'size (bytes)': ibuf_bank_size /8., 'block size (bytes)': ibuf_bits/8., 'read-write port': 0}
+        cfg_dict = {'size (bytes)': ibuf_bank_size /8., 'block size (bytes)': max(ibuf_bits/8,1), 'read-write port': 0}
         ibuf_data = self.sram_obj.get_data_clean(cfg_dict)
         ibuf_read_energy = float(ibuf_data['read_energy_nJ']) / ibuf_bits
         ibuf_write_energy = float(ibuf_data['write_energy_nJ']) / ibuf_bits
@@ -282,7 +287,7 @@ class Simulator(object):
         self.logger.debug('\tRead Energy                 : {0:>8.4f} pJ/bit'.format(ibuf_read_energy * 1.e3))
         self.logger.debug('\tWrite Energy                : {0:>8.4f} pJ/bit'.format(ibuf_write_energy * 1.e3))
         ##################################################
-        cfg_dict = {'size (bytes)': obuf_bank_size /8., 'block size (bytes)': obuf_bits/8., 'read-write port': 1}
+        cfg_dict = {'size (bytes)': obuf_bank_size /8., 'block size (bytes)': max(obuf_bits/8,1), 'read-write port': 1}
         obuf_data = self.sram_obj.get_data_clean(cfg_dict)
         obuf_read_energy = float(obuf_data['read_energy_nJ']) / obuf_bits
         obuf_write_energy = float(obuf_data['write_energy_nJ']) / obuf_bits
@@ -310,6 +315,7 @@ class Simulator(object):
         lookup_dict['M'] = M
         core_data = lookup_pandas_dataframe(core_synth_data, lookup_dict)
         if len(core_data) == 0:
+            print("Couldn't find core data. Assuming default. Bad bad")
             lookup_dict['N'] = 4
             lookup_dict['M'] = 4
             core_data = lookup_pandas_dataframe(core_synth_data, lookup_dict)
@@ -320,6 +326,7 @@ class Simulator(object):
             core_leak_power = float(core_data['Leakage Power (nW)']) * (N * M) / 16.
             core_leak_energy = core_leak_power / float(core_data['Frequency'])
         else:
+            print("core_data was not assumed to be default, that is we got the correct values for the core from the csv. This is good")
             core_area = float(core_data['Area (um^2)']) * 1.e-6
             core_dyn_power = float(core_data['Dynamic Power (nW)'])
             core_dyn_energy = core_dyn_power / float(core_data['Frequency'])

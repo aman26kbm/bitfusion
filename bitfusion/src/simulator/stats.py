@@ -56,6 +56,7 @@ class Stats(object):
         return ret
 
     def get_energy(self, energy_cost, dram_cost=15.e-3):
+        #print("aman total_cycles = {}, mem_stall_cycles = {}".format(self.total_cycles, self.mem_stall_cycles))
         dyn_energy = (self.total_cycles - self.mem_stall_cycles) * energy_cost.core_dynamic_energy
 
         dyn_energy += self.reads['wgt'] * energy_cost.wbuf_read_energy

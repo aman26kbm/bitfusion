@@ -61,14 +61,14 @@ def conv(tensor_in, filters=32, stride=None, kernel_size=3, pad='SAME',
     return act
 
 benchlist = [\
-             'AlexNet', \
-             'SVHN', \
-             'CIFAR10', \
+             #'AlexNet', \
+             #'SVHN', \
+             #'CIFAR10', \
              'LeNet-5', \
-             'VGG-7', \
-             'RESNET-18', \
-             'RNN', \
-             'LSTM' \
+             #'VGG-7', \
+             #'RESNET-18', \
+             #'RNN', \
+             #'LSTM' \
             ]
 
 def get_bench_nn(bench_name, WRPN=False):
@@ -115,6 +115,7 @@ def write_to_csv(csv_name, fields, stats, graph, csv_path='./'):
 def get_bench_numbers(graph, sim_obj, batch_size=1):
     stats = {}
     for opname, op in graph.op_registry.iteritems():
+        #print("in get_bench_numbers")
         out = sim_obj.get_cycles(op, batch_size)
         if out is not None:
             s, l = out

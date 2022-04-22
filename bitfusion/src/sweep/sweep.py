@@ -64,6 +64,15 @@ class SimulatorSweep(object):
         if list_batch is None:
             list_batch = [1]
 
+        print(list_n)
+        print(list_m)
+        print(list_pmax)
+        print(list_pmin)
+        print(list_bw)
+        print(list_bench)
+        print(list_wbuf)
+        print(list_ibuf)
+        print(list_obuf)
         data_line = []
         for batch_size in list_batch:
             for n in list_n:
@@ -86,6 +95,7 @@ class SimulatorSweep(object):
                                             sim_obj.accelerator.sram['out'] = obuf
                                             sim_obj.accelerator.sram['act'] = ibuf
                                             for b in list_bench:
+                                                #print("Inside loop of simulator sweep")
                                                 lookup_dict = {}
                                                 lookup_dict['N'] = n
                                                 lookup_dict['M'] = m
@@ -99,6 +109,7 @@ class SimulatorSweep(object):
                                                 lookup_dict['Batch size'] = batch_size
                                                 results = lookup_pandas_dataframe(self.sweep_df, lookup_dict)
                                                 nn = benchmarks.get_bench_nn(b, WRPN=True)
+                                                #print("length of results = {}".format(len(results)))
                                                 if len(results) == 0:
                                                     self.logger.info('Simulating Benchmark: {}'.format(b))
                                                     self.logger.info('N x M = {} x {}'.format(n, m))
@@ -112,6 +123,7 @@ class SimulatorSweep(object):
                                                         reads = stats[layer].reads
                                                         writes = stats[layer].writes
                                                         stalls = stats[layer].mem_stall_cycles
+                                                        print("appending data_line")
                                                         data_line.append((n,m,pmax,pmin,b,layer,
                                                             cycles,stalls,
                                                             reads['wgt'],writes['wgt'],
@@ -145,7 +157,7 @@ def check_pandas_or_run(sim, dataframe, sim_sweep_csv, batch_size=1, config_file
     results = lookup_pandas_dataframe(dataframe, ld)
 
     if len(results) == 0:
-        sweep_obj = SimulatorSweep(sim_sweep_csv, config_file)
+        sweep_obj = SimulatorSweep(sim_sweep_csv, config_file, verbose=True)
         dataframe = sweep_obj.sweep(sim, list_batch=[batch_size])
         dataframe.to_csv(sim_sweep_csv, index=False)
         return lookup_pandas_dataframe(dataframe, ld)

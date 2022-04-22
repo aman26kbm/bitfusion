@@ -51,9 +51,9 @@ class CactiSweep(object):
                 'Total dynamic write energy per access (nJ)': 'write_energy_nJ',
                 'Total leakage power of a bank (mW)': 'leak_power_mW',
                 'Total gate leakage power of a bank (mW)': 'gate_leak_power_mW',
-                'Cache height (mm)': 'height_mm',
-                'Cache width (mm)': 'width_mm',
-                'Cache area (mm^2)': 'area_mm^2',
+                #'Cache height (mm)': 'height_mm',
+                #'Cache width (mm)': 'width_mm',
+                #'Cache area (mm^2)': 'area_mm^2',
                 }
         parsed_results = {}
         for line in out:
@@ -70,6 +70,12 @@ class CactiSweep(object):
                     m = re.match(regex, line)
                     if m:
                         parsed_results[key] = m.groups()[0]
+                x = re.search(r'Cache height x width \(mm\): ([.?\d]+) x ([.?\d]+)', line)
+                if x is not None:
+                    parsed_results['height_mm'] = x.group(1)
+                    parsed_results['width_mm'] = x.group(2)
+                    parsed_results['area_mm^2'] = float(x.group(1)) * float(x.group(2))
+                    
         return parsed_results
 
     def _run_cacti(self, index_dict):
@@ -80,7 +86,8 @@ class CactiSweep(object):
         cfg_dict = self.default_dict.copy()
         cfg_dict.update(index_dict)
         self._create_cfg(cfg_dict, self.cfg_file)
-        args = ('./'+os.path.basename(self.bin_file), "-infile", os.path.basename(self.cfg_file))
+        args = ('./'+os.path.basename(self.bin_file), "-infile", self.cfg_file)
+        print(args)
         popen = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=os.path.dirname(self.bin_file))
         popen.wait()
         output = popen.stdout
@@ -97,7 +104,7 @@ class CactiSweep(object):
     def get_data(self, index_dict):
         data = self.locate(index_dict)
         if len(data) == 0:
-            print('No entry found in {}, running cacti'.format(self.csv_file))
+            print('No entry found in {}, running cacti.. Good'.format(self.csv_file))
             row_dict = index_dict.copy()
             row_dict.update(self._run_cacti(index_dict))
             self._df = self._df.append(pandas.DataFrame([row_dict]), ignore_index=True)

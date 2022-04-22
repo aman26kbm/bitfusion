@@ -1,0 +1,68 @@
+INFO:bitfusion.src.sweep.sweep.Simulator:Simulating Benchmark: LeNet-5
+INFO:bitfusion.src.sweep.sweep.Simulator:N x M = 16 x 16
+INFO:bitfusion.src.sweep.sweep.Simulator:Max Precision (bits): 2
+INFO:bitfusion.src.sweep.sweep.Simulator:Min Precision (bits): 2
+INFO:bitfusion.src.sweep.sweep.Simulator:Batch size: 16
+INFO:bitfusion.src.sweep.sweep.Simulator:Bandwidth (bits/cycle): 192
+Using config file: bf_e_conf.16_16_2_2.buf64_32_16.freq500m.ini
+No entry found in /home/projects/ljohn/aarora1/wnn/bit_fusion/bitfusion/bitfusion/sram/cacti_sweep.16_16_2_2.csv, running cacti.. Good
+('./cacti', '-infile', '/home/projects/ljohn/aarora1/wnn/bit_fusion/bitfusion/bitfusion/sram/sweep.cfg')
+No entry found in /home/projects/ljohn/aarora1/wnn/bit_fusion/bitfusion/bitfusion/sram/cacti_sweep.16_16_2_2.csv, running cacti.. Good
+('./cacti', '-infile', '/home/projects/ljohn/aarora1/wnn/bit_fusion/bitfusion/bitfusion/sram/sweep.cfg')
+No entry found in /home/projects/ljohn/aarora1/wnn/bit_fusion/bitfusion/bitfusion/sram/cacti_sweep.16_16_2_2.csv, running cacti.. Good
+('./cacti', '-infile', '/home/projects/ljohn/aarora1/wnn/bit_fusion/bitfusion/bitfusion/sram/sweep.cfg')
+core_data was not assumed to be default, that is we got the correct values for the core from the csv. This is good
+Simulator object
+	Max supported precision: 2
+	Min supported precision: 2
+	Systolic array size: 16 -inputs x 16 -outputs
+	Wbuf size: 65,536 Bytes
+	Ibuf size: 32,768 Bytes
+	Obuf size: 16,384 Bytes
+Double buffering enabled. Sizes of SRAM are halved
+
+**************************************************
+Energy costs for BitFusion
+Core dynamic energy : 149.933 pJ/cycle (for entire systolic array)
+WBUF Read energy    : 0.180 pJ/bit
+WBUF Write energy   : 0.482 pJ/bit
+IBUF Read energy    : 0.808 pJ/bit
+IBUF Write energy   : 0.705 pJ/bit
+OBUF Read energy    : 0.040 pJ/bit
+OBUF Write energy   : 0.121 pJ/bit
+
+Got BitFusion Eyeriss, Numbers
+[16]
+[16]
+[2]
+[2]
+[192]
+['LeNet-5']
+[65536]
+[32768]
+[16384]
+core_data was not assumed to be default, that is we got the correct values for the core from the csv. This is good
+core_data was not assumed to be default, that is we got the correct values for the core from the csv. This is good
+core_data was not assumed to be default, that is we got the correct values for the core from the csv. This is good
+core_data was not assumed to be default, that is we got the correct values for the core from the csv. This is good
+appending data_line
+appending data_line
+appending data_line
+appending data_line
+cfg_dict for wbuf = {'read-write port': 0, 'block size (bytes)': 1, 'size (bytes)': 256.0}
+cfg_dict for ibuf = {'read-write port': 0, 'block size (bytes)': 1, 'size (bytes)': 2048.0}
+cfg_dict for obuf = {'read-write port': 1, 'block size (bytes)': 4, 'size (bytes)': 1024.0}
+Done
+BitFusion-Eyeriss comparison
+Area budget = 5.87130177515
+(0.056339, 1.0505130735616, 0.23520509788160002, 0.24333838704)
+Warning: BitFusion Area is outside 10% of eyeriss
+total_area = 1.58539555848, budget = 5.87130177515
+core_data was not assumed to be default, that is we got the correct values for the core from the csv. This is good
+**************************************************
+Benchmark: LeNet-5
+BitFusion time: 2.263096 ms
+BitFusion power: 812.437153918 mWatt
+BitFusion energy: 1838623.27328 nJ
+BitFusion total_cycles: 1131548.0 
+**************************************************
